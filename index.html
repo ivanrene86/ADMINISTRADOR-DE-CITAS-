@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador de Citas Veterinarias</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Media Queries para dispositivos pequeños desde 300px */
+        @media (max-width: 640px) {
+            /* Ajustes generales para móviles pequeños */
+            .container {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            
+            /* Header principal */
+            .header-icon {
+                width: 60px !important;
+                height: 60px !important;
+            }
+            
+            .header-title {
+                font-size: 1.5rem !important;
+                line-height: 2rem !important;
+            }
+            
+            .header-subtitle {
+                font-size: 0.875rem !important;
+            }
+            
+            /* Controles y filtros */
+            .controls-container {
+                padding: 1rem !important;
+            }
+            
+            /* Cards de citas */
+            .card-container {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            /* Imagen de mascota en card */
+            .mascot-image-container {
+                width: 60px !important;
+                height: 60px !important;
+            }
+            
+            .mascot-name {
+                font-size: 1.25rem !important;
+            }
+            
+            /* Badges de estado */
+            .status-badge {
+                font-size: 0.65rem !important;
+                padding: 0.25rem 0.5rem !important;
+            }
+            
+            /* Grid de fecha y hora */
+            .date-time-grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.5rem !important;
+            }
+            
+            /* Botones de acción */
+            .action-buttons button {
+                font-size: 0.75rem !important;
+                padding: 0.5rem !important;
+            }
+            
+            /* Modales */
+            .modal-content {
+                max-height: 85vh !important;
+                margin: 1rem !important;
+            }
+            
+            .modal-header {
+                padding: 1rem !important;
+            }
+            
+            .modal-title {
+                font-size: 1.25rem !important;
+            }
+            
+            .modal-body {
+                padding: 1rem !important;
+            }
+            
+            /* Formularios */
+            .form-input,
+            .form-select,
+            .form-textarea {
+                font-size: 0.875rem !important;
+                padding: 0.625rem !important;
+            }
+            
+            .form-label {
+                font-size: 0.75rem !important;
+            }
+            
+            /* Factura */
+            .invoice-container {
+                padding: 1rem !important;
+            }
+            
+            .invoice-title {
+                font-size: 1.75rem !important;
+            }
+            
+            .invoice-number {
+                font-size: 1rem !important;
+            }
+            
+            .invoice-total {
+                font-size: 2rem !important;
+            }
+        }
+        
+        /* Extra pequeño: 300px - 374px */
+        @media (max-width: 374px) {
+            .container {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            
+            .header-icon {
+                width: 50px !important;
+                height: 50px !important;
+            }
+            
+            .header-title {
+                font-size: 1.25rem !important;
+                line-height: 1.75rem !important;
+            }
+            
+            .mascot-image-container {
+                width: 50px !important;
+                height: 50px !important;
+            }
+            
+            .mascot-name {
+                font-size: 1.1rem !important;
+            }
+            
+            .action-buttons {
+                gap: 0.375rem !important;
+            }
+            
+            .action-buttons button {
+                font-size: 0.7rem !important;
+                padding: 0.4rem !important;
+            }
+            
+            .modal-title {
+                font-size: 1.1rem !important;
+            }
+            
+            .invoice-title {
+                font-size: 1.5rem !important;
+            }
+            
+            .invoice-total {
+                font-size: 1.75rem !important;
+            }
+        }
+        
+        /* Pequeño: 375px - 639px */
+        @media (min-width: 375px) and (max-width: 639px) {
+            .header-title {
+                font-size: 1.625rem !important;
+            }
+            
+            .mascot-name {
+                font-size: 1.375rem !important;
+            }
+        }
+        
+        /* Medio: 640px - 767px */
+        @media (min-width: 640px) and (max-width: 767px) {
+            .card-container {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        
+        /* Grande: 768px en adelante */
+        @media (min-width: 768px) {
+            .card-container {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        
+        /* Extra grande: 1024px en adelante */
+        @media (min-width: 1024px) {
+            .card-container {
+                grid-template-columns: repeat(3, 1fr) !important;
+            }
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .factura-impresion,
+            .factura-impresion * {
+                visibility: visible;
+            }
+            
+            .factura-impresion {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0369a1',
+                            800: '#075985',
+                            9000: '#0284c7',
+                            70: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 min-h-screen">
+    
+    <!-- Contenedor Principal -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mb-8">
+            <div class="text-center">
+                <div class="header-icon inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full mb-4">
+                    <i class="fas fa-paw text-white text-3xl"></i>
+                </div>
+                <h1 class="header-title text-4xl font-bold text-gray-800 mb-2">Administrador de Citas Veterinarias</h1>
+                <p class="header-subtitle text-gray-600">Gestiona las citas de tus pacientes de manera eficiente</p>
+            </div>
+        </div>
+        
+        <!-- Controles -->
+        <div class="controls-container bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <label class="text-gray-700 font-semibold flex items-center gap-2 text-sm md:text-base">
+                        <i class="fas fa-filter text-indigo-600"></i>
+                        Filtrar:
+                    </label>
+                    <select id="filtro-estado" class="flex-1 md:flex-none px-3 md:px-4 py-2 md:py-2.5 bg-white border-2 border-gray-200 rounded-lg text-gray-700 font-medium focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all cursor-pointer hover:border-indigo-400 text-sm md:text-base">
+                        <option value="todas">Todas las citas</option>
+                        <option value="abierta">Abiertas</option>
+                        <option value="terminada">Terminadas</option>
+                        <option value="anulada">Anuladas</option>
+                    </select>
+                </div>
+                
+                <button id="btn-agendar" class="w-full md:w-auto px-4 md:px-6 py-2.5 md:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 text-sm md:text-base">
+                    <i class="fas fa-plus-circle"></i>
+                    Agendar Nueva Cita
+                </button>
+            </div>
+        </div>
+        
+        <!-- Contenido de Citas -->
+        <div id="contenido-citas" class="min-h-[300px]">
+            <!-- Las citas se cargarán aquí -->
+        </div>
+    </div>
+
+    <!-- Modal para agendar/editar cita -->
+    <div id="modal-cita" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 md:p-4 backdrop-blur-sm">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div id="modal-header" class="modal-header bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4 md:p-6 rounded-t-2xl flex justify-between items-center">
+                <h2 id="modal-titulo" class="modal-title text-xl md:text-2xl font-bold flex items-center gap-2">
+                    <i class="fas fa-calendar-plus"></i>
+                    Guardar nueva cita
+                </h2>
+                <button id="btn-cerrar-modal" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center transition-all">
+                    <i class="fas fa-times text-lg md:text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="form-cita" class="modal-body p-4 md:p-6">
+                <div class="space-y-4 md:space-y-5">
+                    <div>
+                        <label class="form-label block text-xs md:text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-dog text-indigo-600 mr-2"></i>Nombre Mascota *
+                        </label>
+                        <input type="text" id="nombre-mascota" placeholder="Ej: Max, Luna, Rocky..." class="form-input w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm md:text-base">
+                    </div>
+
+                    <div>
+                        <label class="form-label block text-xs md:text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-user text-indigo-600 mr-2"></i>Propietario *
+                        </label>
+                        <input type="text" id="propietario" placeholder="Nombre completo del propietario" class="form-input w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm md:text-base">
+                    </div>
+
+                    <div>
+                        <label class="form-label block text-xs md:text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-phone text-indigo-600 mr-2"></i>Teléfono *
+                        </label>
+                        <input type="tel" id="telefono" placeholder="Número de contacto" class="form-input w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm md:text-base">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                        <div>
+                            <label class="form-label block text-xs md:text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-calendar text-indigo-600 mr-2"></i>Fecha de cita *
+                            </label>
+                            <input type="date" id="fecha-cita" class="form-input w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm md:text-base">
+                        </div>
+
+                        <div>
+                            <label class="form-label block text-xs md:text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-clock text-indigo-600 mr-2"></i>Hora (8AM - 8PM) *
+                            </label>
+                            <input type="time" id="hora-cita" class="form-input w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all text-sm md:text-base">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label block text-xs md:text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-paw text-indigo-600 mr-2"></i>Tipo de mascota *
+                        </label>
+                        <select id="tipo-mascota" class="form-select w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all appearance-none bg-white cursor-pointer hover:border-indigo-300 text-sm md:text-base" style="background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3e%3cpolyline points=%226 9 12 15 18 9%22%3e%3c/polyline%3e%3c/svg%3e'); background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 1.5em 1.5em;">
+                            <option value="">✨ Seleccionar tipo de mascota...</option>
+                            <option value="perro">🐕 Perro</option>
+                            <option value="gato">🐈 Gato</option>
+                            <option value="ave">🦜 Ave</option>
+                            <option value="conejo">🐇 Conejo</option>
+                            <option value="hamster">🐹 Hámster</option>
+                            <option value="caballo">🐎 Caballo</option>
+                            <option value="vaca">🐄 Vaca</option>
+                            <option value="tortuga">🐢 Tortuga</option>
+                            <option value="erizo">🦔 Erizo de tierra</option>
+                            <option value="iguana">🦎 Iguana</option>
+                        </select>
+                        <div id="preview-mascota" class="mt-2 md:mt-3 hidden">
+                            <div class="flex items-center gap-2 md:gap-3 p-2 md:p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border-2 border-indigo-200">
+                                <img id="img-preview-mascota" src="" alt="" class="w-10 h-10 md:w-12 md:h-12 object-contain">
+                                <div>
+                                    <p class="text-xs text-gray-500 font-medium">Mascota seleccionada</p>
+                                    <p id="nombre-preview-mascota" class="text-xs md:text-sm font-bold text-indigo-700"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label block text-xs md:text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-notes-medical text-indigo-600 mr-2"></i>Síntomas *
+                        </label>
+                        <textarea id="sintomas" rows="4" placeholder="Describe los síntomas o motivo de la consulta..." class="form-textarea w-full px-3 md:px-4 py-2 md:py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all resize-none text-sm md:text-base"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 md:gap-3 mt-4 md:mt-6 pt-4 md:pt-6 border-t">
+                    <button type="button" id="btn-cancelar" class="flex-1 px-4 md:px-6 py-2 md:py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all text-sm md:text-base">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="btn-guardar" class="flex-1 px-4 md:px-6 py-2 md:py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all text-sm md:text-base">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para facturación -->
+    <div id="modal-factura" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
+            <div class="bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-6 rounded-t-2xl flex justify-between items-center">
+                <h2 class="text-2xl font-bold flex items-center gap-2">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    Facturar Cita
+                </h2>
+                <button id="btn-cerrar-modal-factura" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="form-factura" class="p-6">
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-briefcase-medical text-cyan-600 mr-2"></i>Servicio Prestado *
+                        </label>
+                        <input type="text" id="servicio-prestado" placeholder="Ej: Consulta general, Vacunación..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-dollar-sign text-cyan-600 mr-2"></i>Precio del Servicio *
+                        </label>
+                        <input type="number" id="precio-servicio" placeholder="0.00" step="0.01" min="0" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-credit-card text-cyan-600 mr-2"></i>Método de Pago *
+                        </label>
+                        <select id="metodo-pago" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 transition-all">
+                            <option value="">Seleccionar método...</option>
+                            <option value="efectivo">💵 Efectivo</option>
+                            <option value="tarjeta">💳 Tarjeta</option>
+                            <option value="transferencia">🏦 Transferencia</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-calendar-check text-cyan-600 mr-2"></i>Fecha de Pago *
+                        </label>
+                        <input type="date" id="fecha-pago" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 transition-all">
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mt-6 pt-6 border-t">
+                    <button type="button" id="btn-cancelar-factura" class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
+                        Guardar Factura
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para anular cita -->
+    <div id="modal-anular" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
+            <div class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-6 rounded-t-2xl flex justify-between items-center">
+                <h2 class="text-2xl font-bold flex items-center gap-2">
+                    <i class="fas fa-ban"></i>
+                    Anular Cita
+                </h2>
+                <button id="btn-cerrar-modal-anular" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="form-anular" class="p-6">
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-5 rounded">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 text-xl mt-0.5"></i>
+                        <div>
+                            <p class="font-semibold text-yellow-800">Atención</p>
+                            <p class="text-sm text-yellow-700 mt-1">Al anular esta cita se marcará como cancelada. Por favor, indica el motivo de la anulación.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-clipboard-list text-yellow-600 mr-2"></i>Motivo de Anulación *
+                        </label>
+                        <select id="motivo-anulacion" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all">
+                            <option value="">Seleccionar motivo...</option>
+                            <option value="no-se-presento">❌ No se presentó</option>
+                            <option value="cancelado-cliente">🔄 Cancelado por el cliente</option>
+                            <option value="fallecimiento">💔 Fallecimiento de la mascota</option>
+                            <option value="emergencia">🚨 Emergencia del cliente</option>
+                            <option value="reagendado">📅 Reagendado</option>
+                            <option value="otro">📝 Otro</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-comment text-yellow-600 mr-2"></i>Observaciones (Opcional)
+                        </label>
+                        <textarea id="observaciones-anulacion" rows="3" placeholder="Detalles adicionales sobre la anulación..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all resize-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-calendar-times text-yellow-600 mr-2"></i>Fecha de Anulación *
+                        </label>
+                        <input type="date" id="fecha-anulacion" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 transition-all">
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mt-6 pt-6 border-t">
+                    <button type="button" id="btn-cancelar-anular" class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
+                        Anular Cita
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para ver factura -->
+    <div id="modal-ver-factura" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div class="bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-6 rounded-t-2xl flex justify-between items-center">
+                <h2 class="text-2xl font-bold flex items-center gap-2">
+                    <i class="fas fa-receipt"></i>
+                    Factura
+                </h2>
+                <button id="btn-cerrar-ver-factura" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full w-10 h-10 flex items-center justify-center transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="contenido-factura-visualizar" class="p-6">
+                <!-- Contenido de la factura -->
+            </div>
+
+            <div class="flex gap-3 p-6 pt-0">
+                <button type="button" id="btn-cerrar-factura-ver" class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all">
+                    Cerrar
+                </button>
+                <button type="button" id="btn-imprimir-factura" class="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-print"></i>
+                    Imprimir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar -->
+    <div id="modal-confirmacion" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div class="bg-gradient-to-r from-red-500 to-pink-600 text-white p-6 rounded-t-2xl text-center">
+                <i class="fas fa-exclamation-circle text-5xl mb-3"></i>
+                <h3 class="text-2xl font-bold">Confirmar Eliminación</h3>
+            </div>
+            
+            <div class="p-6 text-center">
+                <p class="text-gray-700 text-lg mb-2">¿Estás seguro de que deseas eliminar la cita de:</p>
+                <p id="nombre-mascota-eliminar" class="text-2xl font-bold text-red-600 my-4"></p>
+                <p class="text-sm text-gray-500">Esta acción no se puede deshacer.</p>
+            </div>
+
+            <div class="flex gap-3 p-6 pt-0">
+                <button id="btn-cancelar-eliminar" class="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all">
+                    Cancelar
+                </button>
+                <button id="btn-confirmar-eliminar" class="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor oculto para impresión -->
+    <div class="factura-impresion hidden" id="factura-impresion"></div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Variables globales
+        const filtroEstado = document.getElementById('filtro-estado');
+        const btnAgendar = document.getElementById('btn-agendar');
+        const contenidoCitas = document.getElementById('contenido-citas');
+        const modal = document.getElementById('modal-cita');
+        const modalHeader = document.getElementById('modal-header');
+        const modalTitulo = document.getElementById('modal-titulo');
+        const btnCerrarModal = document.getElementById('btn-cerrar-modal');
+        const btnCancelar = document.getElementById('btn-cancelar');
+        const btnGuardar = document.getElementById('btn-guardar');
+        const formCita = document.getElementById('form-cita');
+
+        // Elementos del formulario
+        const nombreMascota = document.getElementById('nombre-mascota');
+        const propietario = document.getElementById('propietario');
+        const telefono = document.getElementById('telefono');
+        const fechaCita = document.getElementById('fecha-cita');
+        const horaCita = document.getElementById('hora-cita');
+        const tipoMascota = document.getElementById('tipo-mascota');
+        const sintomas = document.getElementById('sintomas');
+
+        // Modal de facturación
+        const modalFactura = document.getElementById('modal-factura');
+        const btnCerrarModalFactura = document.getElementById('btn-cerrar-modal-factura');
+        const btnCancelarFactura = document.getElementById('btn-cancelar-factura');
+        const formFactura = document.getElementById('form-factura');
+        const servicioPrestado = document.getElementById('servicio-prestado');
+        const precioServicio = document.getElementById('precio-servicio');
+        const metodoPago = document.getElementById('metodo-pago');
+        const fechaPago = document.getElementById('fecha-pago');
+
+        // Modal de anulación
+        const modalAnular = document.getElementById('modal-anular');
+        const btnCerrarModalAnular = document.getElementById('btn-cerrar-modal-anular');
+        const btnCancelarAnular = document.getElementById('btn-cancelar-anular');
+        const formAnular = document.getElementById('form-anular');
+        const motivoAnulacion = document.getElementById('motivo-anulacion');
+        const observacionesAnulacion = document.getElementById('observaciones-anulacion');
+        const fechaAnulacion = document.getElementById('fecha-anulacion');
+
+        // Modal para ver factura
+        const modalVerFactura = document.getElementById('modal-ver-factura');
+        const btnCerrarVerFactura = document.getElementById('btn-cerrar-ver-factura');
+        const btnCerrarFacturaVer = document.getElementById('btn-cerrar-factura-ver');
+        const btnImprimirFactura = document.getElementById('btn-imprimir-factura');
+        const contenidoFacturaVisualizar = document.getElementById('contenido-factura-visualizar');
+
+        // Modal de confirmación
+        const modalConfirmacion = document.getElementById('modal-confirmacion');
+        const nombreMascotaEliminar = document.getElementById('nombre-mascota-eliminar');
+        const btnCancelarEliminar = document.getElementById('btn-cancelar-eliminar');
+        const btnConfirmarEliminar = document.getElementById('btn-confirmar-eliminar');
+
+        // Variables de control
+        let editando = false;
+        let idCitaEditando = null;
+        let idCitaEliminar = null;
+        let idCitaFacturando = null;
+        let idCitaViendoFactura = null;
+        let idCitaAnulando = null;
+
+        // Array para almacenar las citas
+        let citas = [];
+
+        // Función para cargar las citas desde localStorage
+        function cargarCitas() {
+            const citasGuardadas = localStorage.getItem('citas');
+            if (citasGuardadas) {
+                citas = JSON.parse(citasGuardadas);
+                console.log('✅ Citas cargadas desde localStorage:', citas.length);
+            } else {
+                citas = [];
+                console.log('📝 No hay citas guardadas previamente');
+            }
+        }
+
+        // Función para guardar las citas en localStorage
+        function guardarCitas() {
+            localStorage.setItem('citas', JSON.stringify(citas));
+            console.log('💾 Citas guardadas en localStorage');
+        }
+
+        // Cargar las citas al iniciar
+        cargarCitas();
+
+        // Establecer la fecha mínima en el campo de fecha (desde mañana en adelante)
+        const mañana = new Date();
+        mañana.setDate(mañana.getDate() + 1);
+        const añoM = mañana.getFullYear();
+        const mesM = String(mañana.getMonth() + 1).padStart(2, '0');
+        const diaM = String(mañana.getDate()).padStart(2, '0');
+        fechaCita.min = `${añoM}-${mesM}-${diaM}`;
+
+        // Establecer la fecha actual en el campo de fecha de pago y anulación
+        const hoy = new Date();
+        const añoH = hoy.getFullYear();
+        const mesH = String(hoy.getMonth() + 1).padStart(2, '0');
+        const diaH = String(hoy.getDate()).padStart(2, '0');
+        fechaPago.value = `${añoH}-${mesH}-${diaH}`;
+        fechaAnulacion.value = `${añoH}-${mesH}-${diaH}`;
+
+        // Función para formatear la fecha
+        function formatearFecha(fecha) {
+            const [año, mes, dia] = fecha.split('-');
+            return `${dia}/${mes}/${año}`;
+        }
+
+        // Función para formatear la hora de 24h a 12h con AM/PM
+        function formatearHora(hora) {
+            const [horas, minutos] = hora.split(':');
+            let h = parseInt(horas);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            return `${h}:${minutos} ${ampm}`;
+        }
+
+        // Función para formatear el precio
+        function formatearPrecio(precio) {
+            return parseFloat(precio).toFixed(2);
+        }
+
+        // Función para obtener la imagen según el tipo de mascota
+        function obtenerImagenMascota(tipo) {
+            const imagenes = {
+                'perro': './perro2.png',
+                'gato': './gato.png',
+                'ave': '../ave.png',
+                'conejo': './conejo.png!w700wp',
+                'hamster': './hamster.png',
+                'caballo': './caballo.png',
+                'vaca': './vaca.png',
+                'tortuga': './tortuga.png',
+                'erizo': './erizo.png',
+                'iguana': './iguana.png'
+            };
+            return imagenes[tipo] || 'https://img.icons8.com/fluency/96/pets.png';
+        }
+
+        // Función para generar número de factura
+        function generarNumeroFactura(id) {
+            return `FACT-${String(id).padStart(6, '0')}`;
+        }
+
+        // Función para obtener texto del motivo de anulación
+        function obtenerTextoMotivo(motivo) {
+            const motivos = {
+                'no-se-presento': 'No se presentó',
+                'cancelado-cliente': 'Cancelado por el cliente',
+                'fallecimiento': 'Fallecimiento de la mascota',
+                'emergencia': 'Emergencia del cliente',
+                'reagendado': 'Reagendado',
+                'otro': 'Otro'
+            };
+            return motivos[motivo] || motivo;
+        }
+
+        // Función para renderizar las citas
+        function renderizarCitas(filtro = 'todas') {
+            // Si no hay citas en total
+            if (citas.length === 0) {
+                contenidoCitas.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-lg p-12 text-center">
+                        <div class="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-6">
+                            <i class="fas fa-calendar-alt text-gray-400 text-5xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-700 mb-2">No hay citas registradas</h3>
+                        <p class="text-gray-500">¡Agenda la primera cita usando el botón de arriba!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Filtrar citas según el estado seleccionado
+            let citasFiltradas;
+            if (filtro === 'todas') {
+                citasFiltradas = citas;
+            } else {
+                citasFiltradas = citas.filter(cita => cita.estado === filtro);
+            }
+
+            // Si no hay citas con el filtro seleccionado
+            if (citasFiltradas.length === 0 && filtro !== 'todas') {
+                contenidoCitas.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-lg p-12 text-center">
+                        <div class="inline-flex items-center justify-center w-24 h-24 bg-gray-100 rounded-full mb-6">
+                            <i class="fas fa-search text-gray-400 text-5xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-700 mb-2">No hay citas ${filtro}s</h3>
+                        <p class="text-gray-500">Prueba con otro filtro o agenda una nueva cita</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Construir el HTML de las citas
+            let html = '<div class="card-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
+            
+            citasFiltradas.forEach((cita) => {
+                const imagenMascota = obtenerImagenMascota(cita.tipoMascota);
+                const colorEstado = {
+                    'abierta': 'from-green-500 to-emerald-600',
+                    'terminada': 'from-gray-500 to-slate-600',
+                    'anulada': 'from-red-500 to-pink-600'
+                };
+                
+                const badgeEstado = {
+                    'abierta': 'bg-green-100 text-green-800',
+                    'terminada': 'bg-gray-100 text-gray-800',
+                    'anulada': 'bg-red-100 text-red-800'
+                };
+                
+                html += `
+                    <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2 border border-gray-100">
+                        <!-- Header con gradiente -->
+                        <div class="bg-gradient-to-r ${colorEstado[cita.estado]} p-4 md:p-5 relative">
+                            <!-- Badge de estado -->
+                            <div class="absolute top-2 md:top-3 right-2 md:right-3">
+                                <span class="status-badge px-2 md:px-3 py-1 bg-white bg-opacity-95 rounded-full text-xs font-bold uppercase shadow-md ${badgeEstado[cita.estado]}">
+                                    ${cita.estado}
+                                </span>
+                            </div>
+                            
+                            <!-- Imagen y nombre de la mascota -->
+                            <div class="flex items-center gap-3 md:gap-4 mb-3">
+                                <div class="mascot-image-container w-16 md:w-20 h-16 md:h-20 bg-white rounded-full p-2 shadow-lg flex items-center justify-center flex-shrink-0">
+                                    <img src="${imagenMascota}" alt="${cita.tipoMascota}" class="w-full h-full object-contain">
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="mascot-name text-white font-bold text-xl md:text-2xl mb-1 drop-shadow-md truncate">${cita.nombreMascota}</h3>
+                                    <p class="text-white text-opacity-95 text-xs md:text-sm font-medium bg-white bg-opacity-20 inline-block px-2 md:px-3 py-1 rounded-full">
+                                        ${cita.tipoMascota.charAt(0).toUpperCase() + cita.tipoMascota.slice(1)}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Contenido de la card -->
+                        <div class="p-4 md:p-6">
+                            <!-- Información principal con iconos -->
+                            <div class="space-y-2 md:space-y-3 mb-4 md:mb-5">
+                                <div class="flex items-center gap-2 md:gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                                    <div class="w-7 h-7 md:w-8 md:h-8 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-user text-indigo-600 text-xs md:text-sm"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs text-gray-500 font-medium">Propietario</p>
+                                        <p class="text-xs md:text-sm text-gray-800 font-semibold truncate">${cita.propietario}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-2 md:gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                                    <div class="w-7 h-7 md:w-8 md:h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-phone text-purple-600 text-xs md:text-sm"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs text-gray-500 font-medium">Teléfono</p>
+                                        <p class="text-xs md:text-sm text-gray-800 font-semibold truncate">${cita.telefono}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="date-time-grid grid grid-cols-2 gap-2 md:gap-3">
+                                    <div class="flex items-center gap-2 p-2 bg-blue-50 rounded-lg">
+                                        <div class="w-7 h-7 md:w-8 md:h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-calendar text-blue-600 text-xs md:text-sm"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs text-blue-600 font-medium">Fecha</p>
+                                            <p class="text-xs md:text-sm text-gray-800 font-semibold truncate">${formatearFecha(cita.fechaCita)}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-2 p-2 bg-pink-50 rounded-lg">
+                                        <div class="w-7 h-7 md:w-8 md:h-8 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-clock text-pink-600 text-xs md:text-sm"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs text-pink-600 font-medium">Hora</p>
+                                            <p class="text-xs md:text-sm text-gray-800 font-semibold truncate">${formatearHora(cita.horaCita)}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Síntomas -->
+                            <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-3 md:p-4 mb-3 md:mb-4 border border-gray-200">
+                                <p class="text-xs font-bold text-gray-600 mb-2 flex items-center gap-2">
+                                    <i class="fas fa-notes-medical text-indigo-600"></i>
+                                    Síntomas
+                                </p>
+                                <p class="text-xs md:text-sm text-gray-700 leading-relaxed">${cita.sintomas}</p>
+                            </div>
+                            
+                            ${cita.factura ? `
+                                <div class="bg-gradient-to-br from-cyan-50 to-blue-50 border-l-4 border-cyan-500 rounded-lg p-4 mb-4 shadow-sm">
+                                    <p class="text-sm font-bold text-cyan-900 mb-3 flex items-center gap-2">
+                                        <div class="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-file-invoice-dollar text-white text-xs"></i>
+                                        </div>
+                                        Información de Factura
+                                    </p>
+                                    <div class="space-y-2 text-xs">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-cyan-700 font-medium">Servicio:</span>
+                                            <span class="text-cyan-900 font-semibold">${cita.factura.servicio}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-cyan-700 font-medium">Método:</span>
+                                            <span class="text-cyan-900 font-semibold">${cita.factura.metodoPago.charAt(0).toUpperCase() + cita.factura.metodoPago.slice(1)}</span>
+                                        </div>
+                                        <div class="flex justify-between items-center pt-2 border-t border-cyan-200">
+                                            <span class="text-cyan-700 font-bold">Total:</span>
+                                            <span class="text-xl font-bold text-cyan-600">$${formatearPrecio(cita.factura.precio)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            ${cita.anulacion ? `
+                                <div class="bg-gradient-to-br from-yellow-50 to-orange-50 border-l-4 border-yellow-500 rounded-lg p-4 mb-4 shadow-sm">
+                                    <p class="text-sm font-bold text-yellow-900 mb-3 flex items-center gap-2">
+                                        <div class="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-exclamation-triangle text-white text-xs"></i>
+                                        </div>
+                                        Cita Anulada
+                                    </p>
+                                    <div class="space-y-2 text-xs">
+                                        <div class="flex justify-between">
+                                            <span class="text-yellow-700 font-medium">Motivo:</span>
+                                            <span class="text-yellow-900 font-semibold">${obtenerTextoMotivo(cita.anulacion.motivo)}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-yellow-700 font-medium">Fecha:</span>
+                                            <span class="text-yellow-900 font-semibold">${formatearFecha(cita.anulacion.fecha)}</span>
+                                        </div>
+                                        ${cita.anulacion.observaciones ? `
+                                            <div class="pt-2 border-t border-yellow-200">
+                                                <p class="text-yellow-700 font-medium mb-1">Observaciones:</p>
+                                                <p class="text-yellow-900">${cita.anulacion.observaciones}</p>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Botones de acción -->
+                            <div class="action-buttons space-y-2">
+                                ${cita.estado === 'abierta' ? `
+                                    <div class="grid grid-cols-3 gap-1.5 md:gap-2">
+                                        <button onclick="editarCita(${cita.id})" class="px-2 md:px-3 py-2 md:py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-xs font-semibold rounded-lg transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-1 md:gap-1.5">
+                                            <i class="fas fa-edit text-xs md:text-sm"></i>
+                                            <span class="hidden sm:inline">Editar</span>
+                                        </button>
+                                        <button onclick="abrirModalFactura(${cita.id})" class="px-2 md:px-3 py-2 md:py-2.5 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-semibold rounded-lg transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-1 md:gap-1.5">
+                                            <i class="fas fa-check text-xs md:text-sm"></i>
+                                            <span class="hidden sm:inline">Terminar</span>
+                                        </button>
+                                        <button onclick="abrirModalAnular(${cita.id})" class="px-2 md:px-3 py-2 md:py-2.5 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white text-xs font-semibold rounded-lg transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-1 md:gap-1.5">
+                                            <i class="fas fa-ban text-xs md:text-sm"></i>
+                                            <span class="hidden sm:inline">Anular</span>
+                                        </button>
+                                    </div>
+                                ` : ''}
+                                ${cita.factura ? `
+                                    <div class="grid grid-cols-2 gap-1.5 md:gap-2">
+                                        <button onclick="verFactura(${cita.id})" class="px-3 md:px-4 py-2 md:py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white text-xs font-semibold rounded-lg transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-1 md:gap-2">
+                                            <i class="fas fa-receipt text-xs md:text-sm"></i>
+                                            <span>Ver Factura</span>
+                                        </button>
+                                        <button onclick="imprimirFacturaDirecta(${cita.id})" class="px-3 md:px-4 py-2 md:py-2.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-xs font-semibold rounded-lg transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-1 md:gap-2">
+                                            <i class="fas fa-print text-xs md:text-sm"></i>
+                                            <span>Imprimir</span>
+                                        </button>
+                                    </div>
+                                ` : ''}
+                                <button onclick="confirmarEliminar(${cita.id})" class="w-full px-3 md:px-4 py-2 md:py-2.5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-xs font-semibold rounded-lg transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-1 md:gap-2">
+                                    <i class="fas fa-trash-alt text-xs md:text-sm"></i>
+                                    <span>Eliminar Cita</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            contenidoCitas.innerHTML = html;
+        }
+
+        // Función para abrir el modal de facturación
+        window.abrirModalFactura = function(id) {
+            idCitaFacturando = id;
+            formFactura.reset();
+            fechaPago.value = `${añoH}-${mesH}-${diaH}`;
+            modalFactura.classList.remove('hidden');
+        };
+
+        // Función para abrir el modal de anulación
+        window.abrirModalAnular = function(id) {
+            idCitaAnulando = id;
+            formAnular.reset();
+            fechaAnulacion.value = `${añoH}-${mesH}-${diaH}`;
+            modalAnular.classList.remove('hidden');
+        };
+
+        // Función para generar HTML de factura
+        function generarHTMLFactura(cita) {
+            const numeroFactura = generarNumeroFactura(cita.id);
+            const imagenMascota = obtenerImagenMascota(cita.tipoMascota);
+            
+            return `
+                <div class="max-w-3xl mx-auto bg-white border-2 border-gray-300 rounded-xl p-8">
+                    <div class="text-center border-b-4 border-indigo-600 pb-6 mb-6">
+                        <h1 class="text-4xl font-bold text-gray-800 mb-2">FACTURA</h1>
+                        <p class="text-xl font-semibold text-gray-600">${numeroFactura}</p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3 border-l-4 border-indigo-600 pl-3">Datos del Cliente</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="font-semibold text-gray-700">Nombre:</span>
+                                    <span class="text-gray-600">${cita.propietario}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-semibold text-gray-700">Teléfono:</span>
+                                    <span class="text-gray-600">${cita.telefono}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-semibold text-gray-700">Mascota:</span>
+                                    <span class="text-gray-600 flex items-center gap-2">
+                                        <img src="${imagenMascota}" alt="${cita.tipoMascota}" class="w-6 h-6 inline-block">
+                                        ${cita.nombreMascota} (${cita.tipoMascota.charAt(0).toUpperCase() + cita.tipoMascota.slice(1)})
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3 border-l-4 border-indigo-600 pl-3">Datos de la Cita</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="font-semibold text-gray-700">Fecha de cita:</span>
+                                    <span class="text-gray-600">${formatearFecha(cita.fechaCita)}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-semibold text-gray-700">Hora:</span>
+                                    <span class="text-gray-600">${formatearHora(cita.horaCita)}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-semibold text-gray-700">Síntomas:</span>
+                                    <span class="text-gray-600">${cita.sintomas}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3 border-l-4 border-indigo-600 pl-3">Servicio Prestado</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="font-semibold text-gray-700">Servicio:</span>
+                                    <span class="text-gray-600">${cita.factura.servicio}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-semibold text-gray-700">Precio:</span>
+                                    <span class="text-gray-600">$${formatearPrecio(cita.factura.precio)}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-semibold text-gray-700">Método de pago:</span>
+                                    <span class="text-gray-600">${cita.factura.metodoPago.charAt(0).toUpperCase() + cita.factura.metodoPago.slice(1)}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-semibold text-gray-700">Fecha de pago:</span>
+                                    <span class="text-gray-600">${formatearFecha(cita.factura.fechaPago)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-indigo-50 border-2 border-indigo-600 rounded-lg p-6 text-right">
+                        <p class="text-sm text-gray-600 mb-2">TOTAL A PAGAR:</p>
+                        <p class="text-4xl font-bold text-indigo-600">$${formatearPrecio(cita.factura.precio)}</p>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t-2 border-gray-300 text-center text-sm text-gray-600">
+                        <p class="font-semibold">Gracias por su preferencia</p>
+                        <p class="mt-2">Factura generada el ${formatearFecha(`${añoH}-${mesH}-${diaH}`)}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Función para ver factura
+        window.verFactura = function(id) {
+            const cita = citas.find(c => c.id === id);
+            
+            if (cita && cita.factura) {
+                idCitaViendoFactura = id;
+                contenidoFacturaVisualizar.innerHTML = generarHTMLFactura(cita);
+                modalVerFactura.classList.remove('hidden');
+            }
+        };
+
+        // Función para imprimir factura
+        btnImprimirFactura.addEventListener('click', function() {
+            if (idCitaViendoFactura) {
+                imprimirFacturaDirecta(idCitaViendoFactura);
+            }
+        });
+
+        window.imprimirFacturaDirecta = function(id) {
+            const cita = citas.find(c => c.id === id);
+            
+            if (cita && cita.factura) {
+                const facturaImpresion = document.getElementById('factura-impresion');
+                facturaImpresion.innerHTML = generarHTMLFactura(cita);
+                facturaImpresion.classList.remove('hidden');
+                window.print();
+                facturaImpresion.classList.add('hidden');
+            }
+        };
+
+        // Event listeners para cerrar modales
+        btnCerrarModalFactura.addEventListener('click', () => {
+            modalFactura.classList.add('hidden');
+            idCitaFacturando = null;
+        });
+
+        btnCancelarFactura.addEventListener('click', () => {
+            modalFactura.classList.add('hidden');
+            idCitaFacturando = null;
+        });
+
+        modalFactura.addEventListener('click', (e) => {
+            if (e.target === modalFactura) {
+                modalFactura.classList.add('hidden');
+                idCitaFacturando = null;
+            }
+        });
+
+        btnCerrarModalAnular.addEventListener('click', () => {
+            modalAnular.classList.add('hidden');
+            idCitaAnulando = null;
+        });
+
+        btnCancelarAnular.addEventListener('click', () => {
+            modalAnular.classList.add('hidden');
+            idCitaAnulando = null;
+        });
+
+        modalAnular.addEventListener('click', (e) => {
+            if (e.target === modalAnular) {
+                modalAnular.classList.add('hidden');
+                idCitaAnulando = null;
+            }
+        });
+
+        btnCerrarVerFactura.addEventListener('click', () => {
+            modalVerFactura.classList.add('hidden');
+            idCitaViendoFactura = null;
+        });
+
+        btnCerrarFacturaVer.addEventListener('click', () => {
+            modalVerFactura.classList.add('hidden');
+            idCitaViendoFactura = null;
+        });
+
+        modalVerFactura.addEventListener('click', (e) => {
+            if (e.target === modalVerFactura) {
+                modalVerFactura.classList.add('hidden');
+                idCitaViendoFactura = null;
+            }
+        });
+
+        // Validar y guardar factura
+        formFactura.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (servicioPrestado.value.trim() === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes rellenar el campo "Servicio Prestado"',
+                    confirmButtonColor: '#0ea5e9',
+                    confirmButtonText: 'Entendido'
+                });
+                servicioPrestado.focus();
+                return;
+            }
+
+            if (precioServicio.value === '' || parseFloat(precioServicio.value) <= 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Precio inválido',
+                    text: 'Debes ingresar un precio válido mayor a 0',
+                    confirmButtonColor: '#0ea5e9',
+                    confirmButtonText: 'Entendido'
+                });
+                precioServicio.focus();
+                return;
+            }
+
+            if (metodoPago.value === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes seleccionar un método de pago',
+                    confirmButtonColor: '#0ea5e9',
+                    confirmButtonText: 'Entendido'
+                });
+                metodoPago.focus();
+                return;
+            }
+
+            if (fechaPago.value === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes seleccionar una fecha de pago',
+                    confirmButtonColor: '#0ea5e9',
+                    confirmButtonText: 'Entendido'
+                });
+                fechaPago.focus();
+                return;
+            }
+
+            const cita = citas.find(c => c.id === idCitaFacturando);
+            
+            if (cita) {
+                cita.factura = {
+                    servicio: servicioPrestado.value.trim(),
+                    precio: precioServicio.value,
+                    metodoPago: metodoPago.value,
+                    fechaPago: fechaPago.value
+                };
+
+                cita.estado = 'terminada';
+                guardarCitas();
+                modalFactura.classList.add('hidden');
+                idCitaFacturando = null;
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Cita terminada y factura guardada exitosamente',
+                    confirmButtonColor: '#10b981',
+                    confirmButtonText: 'Perfecto',
+                    timer: 2000
+                });
+                
+                renderizarCitas(filtroEstado.value);
+            }
+        });
+
+        // Validar y guardar anulación
+        formAnular.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (motivoAnulacion.value === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes seleccionar un motivo de anulación',
+                    confirmButtonColor: '#f59e0b',
+                    confirmButtonText: 'Entendido'
+                });
+                motivoAnulacion.focus();
+                return;
+            }
+
+            if (fechaAnulacion.value === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes seleccionar una fecha de anulación',
+                    confirmButtonColor: '#f59e0b',
+                    confirmButtonText: 'Entendido'
+                });
+                fechaAnulacion.focus();
+                return;
+            }
+
+            const cita = citas.find(c => c.id === idCitaAnulando);
+            
+            if (cita) {
+                cita.anulacion = {
+                    motivo: motivoAnulacion.value,
+                    observaciones: observacionesAnulacion.value.trim() || null,
+                    fecha: fechaAnulacion.value
+                };
+
+                cita.estado = 'anulada';
+                guardarCitas();
+                modalAnular.classList.add('hidden');
+                idCitaAnulando = null;
+                
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Cita anulada',
+                    text: 'La cita ha sido anulada correctamente',
+                    confirmButtonColor: '#f59e0b',
+                    confirmButtonText: 'De acuerdo',
+                    timer: 2000
+                });
+                
+                renderizarCitas(filtroEstado.value);
+            }
+        });
+
+        // Función para editar una cita
+        window.editarCita = function(id) {
+            const cita = citas.find(c => c.id === id);
+            if (cita && cita.estado === 'abierta') {
+                editando = true;
+                idCitaEditando = id;
+
+                modalTitulo.innerHTML = '<i class="fas fa-edit"></i> Editar cita';
+                modalHeader.classList.remove('from-green-500', 'to-emerald-600');
+                modalHeader.classList.add('from-blue-500', 'to-indigo-600');
+                btnGuardar.textContent = 'Actualizar';
+
+                nombreMascota.value = cita.nombreMascota;
+                propietario.value = cita.propietario;
+                telefono.value = cita.telefono;
+                fechaCita.value = cita.fechaCita;
+                horaCita.value = cita.horaCita;
+                tipoMascota.value = cita.tipoMascota;
+                sintomas.value = cita.sintomas;
+
+                modal.classList.remove('hidden');
+            }
+        };
+
+        // Función para confirmar la eliminación
+        window.confirmarEliminar = function(id) {
+            const cita = citas.find(c => c.id === id);
+            if (cita) {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    html: `¿Deseas eliminar la cita de <strong>${cita.nombreMascota}</strong>?<br><small class="text-gray-500">Esta acción no se puede deshacer</small>`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        eliminarCita(id);
+                    }
+                });
+            }
+        };
+
+        // Función para eliminar una cita
+        function eliminarCita(id) {
+            const index = citas.findIndex(c => c.id === id);
+            if (index !== -1) {
+                citas.splice(index, 1);
+                guardarCitas();
+                renderizarCitas(filtroEstado.value);
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Eliminada',
+                    text: 'La cita ha sido eliminada correctamente',
+                    confirmButtonColor: '#10b981',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+            }
+        }
+
+        // Event listener para el filtro
+        filtroEstado.addEventListener('change', function() {
+            renderizarCitas(this.value);
+        });
+
+        // Event listener para mostrar preview de mascota seleccionada
+        tipoMascota.addEventListener('change', function() {
+            const previewContainer = document.getElementById('preview-mascota');
+            const imgPreview = document.getElementById('img-preview-mascota');
+            const nombrePreview = document.getElementById('nombre-preview-mascota');
+            
+            if (this.value) {
+                const imagenMascota = obtenerImagenMascota(this.value);
+                const nombreMascota = this.options[this.selectedIndex].text;
+                
+                imgPreview.src = imagenMascota;
+                imgPreview.alt = this.value;
+                nombrePreview.textContent = nombreMascota;
+                previewContainer.classList.remove('hidden');
+                previewContainer.classList.add('animate-fade-in');
+            } else {
+                previewContainer.classList.add('hidden');
+            }
+        });
+
+        // Abrir modal de nueva cita
+        btnAgendar.addEventListener('click', function() {
+            editando = false;
+            idCitaEditando = null;
+            modalTitulo.innerHTML = '<i class="fas fa-calendar-plus"></i> Guardar nueva cita';
+            modalHeader.classList.remove('from-blue-500', 'to-indigo-600');
+            modalHeader.classList.add('from-green-500', 'to-emerald-600');
+            btnGuardar.textContent = 'Guardar';
+            modal.classList.remove('hidden');
+            formCita.reset();
+        });
+
+        // Cerrar modal de cita
+        btnCerrarModal.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            editando = false;
+            idCitaEditando = null;
+        });
+
+        btnCancelar.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            editando = false;
+            idCitaEditando = null;
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                editando = false;
+                idCitaEditando = null;
+            }
+        });
+
+        // Validar horario
+        function validarHorario(hora) {
+            if (!hora) return false;
+            const [horas, minutos] = hora.split(':').map(Number);
+            if (horas < 8 || horas > 20) return false;
+            if (horas === 20 && minutos > 0) return false;
+            return true;
+        }
+
+        // Validar y guardar cita
+        formCita.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (nombreMascota.value.trim() === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes rellenar el campo "Nombre Mascota"',
+                    confirmButtonColor: '#0ea5e9',
+                    confirmButtonText: 'Entendido'
+                });
+                nombreMascota.focus();
+                return;
+            }
+
+            if (propietario.value.trim() === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes rellenar el campo "Propietario"',
+                    confirmButtonColor: '#0ea5e9',
+                    confirmButtonText: 'Entendido'
+                });
+                propietario.focus();
+                return;
+            }
+
+            if (telefono.value.trim() === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes rellenar el campo "Teléfono"',
+                    confirmButtonColor: '#0ea5e9',
+                    confirmButtonText: 'Entendido'
+                });
+                telefono.focus();
+                return;
+            }
+
+            if (fechaCita.value === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes seleccionar una "Fecha de cita"',
+                    confirmButtonColor: '#0ea5e9',
+                    confirmButtonText: 'Entendido'
+                });
+                fechaCita.focus();
+                return;
+            }
+
+            const fechaSeleccionada = new Date(fechaCita.value);
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            
+            if (fechaSeleccionada <= hoy) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Fecha inválida',
+                    text: 'La fecha de la cita debe ser posterior a hoy (a partir de mañana)',
+                    confirmButtonColor: '#ef4444',
+                    confirmButtonText: 'Entendido'
+                });
+                fechaCita.focus();
+                return;
+            }
+
+            if (horaCita.value === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes seleccionar una "Hora de cita"',
+                    confirmButtonColor: '#0ea5e9',
+                    confirmButtonText: 'Entendido'
+                });
+                horaCita.focus();
+                return;
+            }
+
+            if (!validarHorario(horaCita.value)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Horario inválido',
+                    text: 'La hora de la cita debe estar entre las 8:00 AM y las 8:00 PM',
+                    confirmButtonColor: '#ef4444',
+                    confirmButtonText: 'Entendido'
+                });
+                horaCita.focus();
+                return;
+            }
+
+            if (tipoMascota.value === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes seleccionar un "Tipo de mascota"',
+                    confirmButtonColor: '#0ea5e9',
+                    confirmButtonText: 'Entendido'
+                });
+                tipoMascota.focus();
+                return;
+            }
+
+            if (sintomas.value.trim() === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Debes rellenar el campo "Síntomas"',
+                    confirmButtonColor: '#0ea5e9',
+                    confirmButtonText: 'Entendido'
+                });
+                sintomas.focus();
+                return;
+            }
+
+            if (editando && idCitaEditando !== null) {
+                const cita = citas.find(c => c.id === idCitaEditando);
+                if (cita) {
+                    cita.nombreMascota = nombreMascota.value.trim();
+                    cita.propietario = propietario.value.trim();
+                    cita.telefono = telefono.value.trim();
+                    cita.fechaCita = fechaCita.value;
+                    cita.horaCita = horaCita.value;
+                    cita.tipoMascota = tipoMascota.value;
+                    cita.sintomas = sintomas.value.trim();
+
+                    guardarCitas();
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Actualizada!',
+                        text: 'Cita actualizada exitosamente',
+                        confirmButtonColor: '#10b981',
+                        confirmButtonText: 'Perfecto',
+                        timer: 2000
+                    });
+                    
+                    modal.classList.add('hidden');
+                    formCita.reset();
+                    editando = false;
+                    idCitaEditando = null;
+                    renderizarCitas(filtroEstado.value);
+                }
+            } else {
+                const nuevaCita = {
+                    id: Date.now(),
+                    nombreMascota: nombreMascota.value.trim(),
+                    propietario: propietario.value.trim(),
+                    telefono: telefono.value.trim(),
+                    fechaCita: fechaCita.value,
+                    horaCita: horaCita.value,
+                    tipoMascota: tipoMascota.value,
+                    sintomas: sintomas.value.trim(),
+                    estado: 'abierta',
+                    factura: null,
+                    anulacion: null
+                };
+
+                citas.push(nuevaCita);
+                guardarCitas();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Guardada!',
+                    text: 'Cita guardada exitosamente',
+                    confirmButtonColor: '#10b981',
+                    confirmButtonText: 'Perfecto',
+                    timer: 2000
+                });
+                
+                modal.classList.add('hidden');
+                formCita.reset();
+                renderizarCitas(filtroEstado.value);
+            }
+        });
+
+        // Inicializar
+        renderizarCitas();
+        console.log('✅ Administrador de Citas con Tailwind CSS y SweetAlert2 cargado correctamente');
+    </script>
+</body>
+</html>
